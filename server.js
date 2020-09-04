@@ -16,6 +16,8 @@ const userComments=[{
     comments:"Data Level-2"
 }]
 
+let refreshTokens=[]
+
 app.post('/login',(req,res)=>
 {
     //Authentication
@@ -25,14 +27,48 @@ app.post('/login',(req,res)=>
     console.log(req.body);
     const user={name:req.body.userName}
     console.log(user);
-   const accessToken=jwt.sign(user,process.env.access_secret_key);
-    res.send({accessToken});
+   const accessToken=accessTokenGenerator(user);
+   const refreshToken=jwt.sign(user,process.env.refresh_secret_key);
+   refreshTokens.push(refreshToken);
+    res.send({accessToken,refreshToken});
 })
+
+app.post('/refresh',(req,res)=>
+{
+    const refreshToken=req.body.refreshToken;
+
+    if(refreshToken==null)
+    res.sendStatus(401);
+
+    //the token that is provided by user , is present with me or not
+
+    if(!refreshTokens.includes(refreshToken))
+    res.sendStatus(403);
+
+    jwt.verify(refreshToken,process.env.refresh_secret_key,(err,user)=>
+    {
+    if(err)
+    res.sendStatus(403)
+    const accessToken=accessTokenGenerator({name:user.name});
+    res.json({accessToken});
+   })
+})
+
+app.post('/logout',(req,res)=>
+{
+    const refreshToken=req.body.refreshToken;
+    refreshTokens=refreshTokens.filter(token=>token!=refreshToken);
+
+    res.send({logout:true})
+})
+
+function accessTokenGenerator(user) {
+    return jwt.sign(user,process.env.access_secret_key,{expiresIn:"35s"});
+}
 
 
 app.get('/comments',authenticateToken,(req,res)=>
 {
-
     res.send( userComments.filter(user =>  user.name===req.user.name));
 })
 
