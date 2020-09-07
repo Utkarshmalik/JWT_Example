@@ -1,0 +1,34 @@
+<html>
+<body class="text-center">
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+<main role="main" class="inner cover">
+
+        <%- include('../template/head.ejs')-%>
+
+
+        <%- include('../template/nav.ejs')-%>
+
+
+<h1 class="cover-heading">SSR Example in NODEJS</h1>
+<p class="lead">This is a sample app to  view template engine with Expressjs and Node.js framework
+</p>
+<h1>
+    <%= name %>
+    
+</h1>
+
+<p>
+
+    <%= data %>
+
+</p>
+<p class="lead">
+<a href="https://medium.com/@pkoulianos/master-ejs-template-engine-with-node-js-and-expressjs" class="btn btn-lg btn-secondary">Read More At Medium</a>
+</p>
+</main>
+</div>
+
+<%- include('../template/footer.ejs')-%>
+
+</body>
+</html>

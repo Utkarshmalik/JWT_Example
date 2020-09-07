@@ -3,10 +3,21 @@ const express= require("express");
 const app=express()
 const bodyParser=require('body-parser');
 const cors=require('cors');
+const path=require("path");
 var jwt = require('jsonwebtoken');
 app.use(cors())
 app.use(bodyParser.json())
+app.set('view engine', 'ejs');
 
+
+
+app.set('views', path.join(__dirname, 'views/pages'));
+app.set('view engine', 'ejs');
+
+app.get('/',(req,res)=>
+{
+    res.render("home",{name:"Utkarsh",data:"SOME DATA COMING FROM MY DATABASE"});
+})
 
 const userComments=[{
     name:"Utkarsh",
