@@ -9,6 +9,57 @@ app.use(cors())
 app.use(bodyParser.json())
 app.set('view engine', 'ejs');
 
+var multer  = require('multer')
+
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname + '-' + Date.now()+path.extname(file.originalname))
+    }
+  })
+
+  function fileFilter (req, file, cb) {    
+    // Allowed ext
+     const filetypes = /jpeg|jpg|png|gif/;
+  
+   // Check ext
+    const extname =  filetypes.test(path.extname(file.originalname).toLowerCase());
+   // Check mime
+   const mimetype = filetypes.test(file.mimetype);
+  
+   if(mimetype && extname){
+       return cb(null,true);
+   } else {
+       cb('Error: Images Only!');
+   }
+  }
+
+  var upload = multer({ storage: storage ,limits:{
+    fileSize:1000000
+  }, fileFilter })
+
+// var upload=multer({dest:'uploads/'})
+
+
+app.post('/upload',upload.single('product_pic'),(req,res)=>
+{
+
+     console.log(req.file);
+    // console.log(req.body);
+    res.send("Hello");
+
+    const  Product=new Schema({
+     id:req.body.id,
+     title:req.body.titile,
+      productImage:req.file.path
+    })
+
+    Product.save()
+
+});
+
 
 
 app.set('views', path.join(__dirname, 'views/pages'));
